@@ -1,0 +1,186 @@
+# ============================================================
+#  主题：拾光（视觉参考安知鱼，配色取自中国传统色）
+# ============================================================
+
+# ---------- 站点 Logo ----------
+logo:
+  # 导航栏左侧的标志，替换 themes/shiguang/source/img/logo.png 即可
+  image: /img/logo.png
+  # 鼠标悬停时是否旋转
+  spin: false
+
+# ---------- 导航菜单 ----------
+# 写法一：直接写链接 → 鼠标放上去不会展开，点了直接进页面
+#   关于: /about/
+# 写法二：写一组子项 → 鼠标放上去展开
+#   生涯:
+#     游戏: /games/
+# 文章下面的分类是自动生成的：你在 source/_posts/ 里建什么文件夹，
+# 这里就会出现什么分类，不用改配置。
+menu:
+  文章:
+    _auto: categories
+  生涯:
+    游戏: /games/
+    电影: /movies/
+    动漫: /anime/
+  关于: /about/
+
+# ---------- 首页顶部横幅 ----------
+banner:
+  enable: true
+  title: 与谁同坐
+  intro: 清风明月我
+  url_text: 梦鸼的博客
+  # 左侧横幅的三个标签按钮
+  tabs:
+    - label: 写作
+      icon: pen
+      href: /archives/
+      color: '#216e99'
+    - label: 游戏
+      icon: gamepad
+      href: /games/
+      color: '#c6452b'
+    - label: 电影
+      icon: film
+      href: /movies/
+      color: '#794294'
+    - label: 动漫
+      icon: tv
+      href: /anime/
+      color: '#7a9a4e'
+  # 右侧推荐位：会自动取前 5 篇 featured: true 的文章（没有就取最新 5 篇）
+  featured_count: 5
+  # 横幅左侧渐变背景图（留空则使用主题内置渐变）
+  image: ''
+
+# ---------- 顶部公告 ----------
+notice:
+  enable: true
+  text: 本人个人博客正在建设阶段，欢迎在本人社媒提出建议
+  link: /about/
+
+# ---------- 个人名片 / 社交链接 ----------
+author_card:
+  enable: true
+  name: 梦鸼
+  avatar: /img/avatar.svg
+  # 图标名可选：netease / bilibili / steam / bangumi / github / mail / rss / link
+  social:
+    netease:
+      name: 网易云音乐
+      link: https://music.163.com/#/user/home?id=3242678153
+      icon: netease
+      color: '#e60026'
+      desc: 我的歌单与红心
+    bilibili:
+      name: 哔哩哔哩
+      link: https://space.bilibili.com/3494361530632943?spm_id_from=333.1007.0.0
+      icon: bilibili
+      color: '#fb7299'
+      desc: 追番与视频收藏
+    steam:
+      name: Steam
+      link: https://steamcommunity.com/id/annansup/
+      icon: steam
+      color: '#1b2838'
+      desc: 游戏时长与成就
+    bangumi:
+      name: Bangumi
+      link: https://bgm.tv/user/annansup
+      icon: bangumi
+      color: '#f09199'
+      desc: 番组计划收藏
+    douyin:
+      name: 抖音
+      link: https://www.douyin.com/search/26523696138
+      icon: douyin
+      color: '#fe2c55'
+      desc: 抖音号 26523696138
+    mail:
+      name: 邮箱
+      link: mailto:annansup@outlook.com
+      icon: mail
+      color: '#216e99'
+      desc: annansup@outlook.com
+
+# ---------- 侧边栏 ----------
+sidebar:
+  tag_cloud: true
+  archive: true
+  stats: true
+  # 建站日期，用于统计"建站天数"
+  since: 2026-09-14
+
+# ---------- 文章页 ----------
+post:
+  toc: true
+  copyright: true
+  reward: false
+  # 未填写 cover 时使用的默认封面
+  default_cover: /img/cover-default.svg
+
+# ---------- 页脚 ----------
+footer:
+  since: 2026
+  # 底部链接分组
+  links:
+    逛一逛:
+      全部文章: /archives/
+      我的归档: /categories/
+    收藏:
+      游戏: /games/
+      电影: /movies/
+      动漫: /anime/
+    关于:
+      关于我: /about/
+      RSS 订阅: /atom.xml
+  # 备案号（留空则不显示）
+  icp: ''
+
+# ---------- 搜索 ----------
+search:
+  enable: true
+  placeholder: 输入关键词后回车搜索…
+
+# ---------- 左下角音乐播放器 ----------
+music:
+  enable: true
+  # 把 mp3 放进 source/music/ 目录即可，页面会自动扫描并随机播放
+  folder: /music/
+  title: 我的收藏
+  volume: 0.35
+  loop: true # 一首放完自动接着播放下一首（循环播放）
+  # 如果你想把音乐放在别处（比如 CDN），可以直接在这里写歌单：
+  # playlist:
+  #   - name: 歌曲名
+  #     url: https://example.com/song.mp3
+  playlist: []
+
+# ---------- 鼠标交互特效 ----------
+effects:
+  enable: true
+  cursor_glow: true # 跟随鼠标的柔光
+  card_tilt: true # 横幅随鼠标轻微倾斜
+  ripple: true # 按钮点击水波纹
+
+# ---------- 站内切页不整页刷新（音乐播放不会被打断） ----------
+pjax:
+  enable: true
+
+# ---------- 评论（默认关闭；想用评论时打开并填配置） ----------
+comments:
+  enable: false
+  # 支持 giscus / twikoo / waline
+  type: giscus
+  giscus:
+    repo: ''
+    repo_id: ''
+    category: Announcements
+    category_id: ''
+    mapping: pathname
+  twikoo:
+    env_id: ''
+  waline:
+    server_url: ''

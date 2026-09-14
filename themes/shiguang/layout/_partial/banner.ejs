@@ -1,0 +1,57 @@
+<%
+  var featured = site.posts.filter(function (p) { return p.featured; }).sort('-date').limit(theme.banner.featured_count || 5);
+  if (!featured.length) featured = site.posts.sort('-date').limit(theme.banner.featured_count || 5);
+  var tabs = theme.banner.tabs || [];
+%>
+<div id="banner" class="banner<%- theme.banner.image ? ' has-image' : '' %>">
+  <div class="banner-inner">
+    <div class="banner-left"<%- theme.banner.image ? ' style="background-image:url(' + url_for(theme.banner.image) + ')"' : '' %>>
+      <div class="banner-text">
+        <h1 class="banner-title"><%= theme.banner.title %></h1>
+        <p class="banner-intro"><%= theme.banner.intro %></p>
+        <span class="banner-url"><%= theme.banner.url_text %></span>
+      </div>
+      <% if (tabs.length) { %>
+        <div class="banner-tabs">
+          <% tabs.forEach(function (tab, i) { %>
+            <a class="banner-tab<%- i === 0 ? ' active' : '' %>" href="<%- url_for(tab.href) %>" style="--tab-color:<%= tab.color %>" title="<%= tab.label %>">
+              <span class="tab-icon"><%- icon(tab.icon || 'link') %></span>
+              <span class="tab-text"><%= tab.label %></span>
+            </a>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="banner-right">
+      <% if (featured.length) { %>
+        <div class="featured-slider" id="featured-slider">
+          <% featured.each(function (post, i) { %>
+            <a class="featured-item<%- i === 0 ? ' active' : '' %>" href="<%- url_for(post.path) %>" data-index="<%= i %>">
+              <img src="<%- url_for(post.cover || theme.post.default_cover) %>" alt="<%= post.title %>" loading="<%= i === 0 ? 'eager' : 'lazy' %>">
+              <div class="featured-mask"></div>
+              <div class="featured-info">
+                <span class="featured-tag"><%= post.categories && post.categories.length ? post.categories.first().name : '推荐' %></span>
+                <h2 class="featured-title"><%= post.title %></h2>
+              </div>
+            </a>
+          <% }); %>
+          <div class="featured-dots" id="featured-dots">
+            <% featured.each(function (post, i) { %>
+              <button class="featured-dot<%- i === 0 ? ' active' : '' %>" data-index="<%= i %>" type="button" aria-label="第<%= i + 1 %>篇"></button>
+            <% }); %>
+          </div>
+          <a class="featured-more" href="<%- url_for('/archives/') %>"><%- icon('arrow-right') %> 更多推荐</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (theme.notice.enable) { %>
+    <a class="notice-bar" href="<%- url_for(theme.notice.link || '/about/') %>">
+      <span class="notice-icon"><%- icon('megaphone') %></span>
+      <span class="notice-text"><%= theme.notice.text %></span>
+      <span class="notice-close" id="notice-close" role="button" title="关闭"><%- icon('close') %></span>
+    </a>
+  <% } %>
+</div>

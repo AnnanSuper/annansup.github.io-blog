@@ -1,0 +1,26 @@
+<nav id="nav">
+  <div class="nav-inner">
+    <a id="site-name" href="<%- url_for('/') %>" title="<%= config.title %>">
+      <img class="site-logo<%- theme.logo.spin ? ' can-spin' : '' %>" src="<%- url_for(theme.logo.image) %>" alt="<%= config.title %>">
+      <span class="site-name-text"><%= config.title %></span>
+    </a>
+
+    <div id="menus" class="menus">
+      <%- partial('_partial/menu', { items: theme.menu }) %>
+    </div>
+
+    <div id="nav-right">
+      <% if (theme.search.enable) { %>
+        <button class="nav-btn" id="search-btn" type="button" title="搜索" aria-label="搜索"><%- icon('search') %></button>
+      <% } %>
+      <%- partial('_partial/music') %>
+      <button class="nav-btn" id="aside-toggle-btn" type="button" title="收起 / 展开侧边栏" aria-label="侧边栏"><%- icon('columns') %></button>
+      <button class="nav-btn" id="darkmode-btn" type="button" title="切换深浅色" aria-label="切换深浅色">
+        <span class="icon-sun"><%- icon('sun') %></span>
+        <span class="icon-moon"><%- icon('moon') %></span>
+      </button>
+      <button class="nav-btn nav-btn-menu" id="mobile-menu-btn" type="button" title="菜单" aria-label="菜单"><%- icon('menu') %></button>
+    </div>
+    <div id="read-progress"></div>
+  </div>
+</nav>

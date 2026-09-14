@@ -1,0 +1,42 @@
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-social">
+      <% Object.keys(theme.author_card.social || {}).forEach(function (key) { %>
+        <%
+          var item = theme.author_card.social[key];
+          var link = (item && item.link) ? item.link : item;
+          var iconName = (item && item.icon) ? item.icon : key;
+          var label = (item && item.name) ? item.name : key;
+        %>
+        <a href="<%- link %>" title="<%= label %>" target="_blank" rel="noopener nofollow"><%- icon(iconName) %></a>
+      <% }); %>
+    </div>
+
+    <div class="footer-links">
+      <% Object.keys(theme.footer.links || {}).forEach(function (group) { %>
+        <div class="footer-link-group">
+          <div class="footer-link-title"><%= group %></div>
+          <% Object.keys(theme.footer.links[group]).forEach(function (name) { %>
+            <a href="<%- url_for(theme.footer.links[group][name]) %>"><%= name %></a>
+          <% }); %>
+        </div>
+      <% }); %>
+    </div>
+
+    <div id="footer-bar">
+      <div class="footer-copyright">
+        &copy; <%= theme.footer.since %> - <%= date(new Date(), 'YYYY') %> By
+        <a href="<%- url_for('/') %>"><%= config.author %></a>
+        <span class="footer-dot">·</span>
+        <span>由 <a href="https://hexo.io" target="_blank" rel="noopener nofollow">Hexo</a> 驱动</span>
+      </div>
+      <div class="footer-extra">
+        <span>主题：拾光</span>
+        <% if (theme.footer.icp) { %>
+          <span class="footer-dot">·</span>
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener nofollow"><%= theme.footer.icp %></a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</footer>

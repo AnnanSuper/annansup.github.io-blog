@@ -1,0 +1,21 @@
+<% if (theme.music.enable) { %>
+  <div id="music-player" class="music-player" data-folder="<%= theme.music.folder %>">
+    <b id="music-title" class="music-now marquee" data-marquee>
+      <span class="marquee-inner" data-text=""><span></span></span>
+    </b>
+
+    <button id="music-toggle" class="nav-btn music-btn" type="button" title="播放 / 暂停" aria-label="播放音乐">
+      <span class="music-state-off"><%- icon('music') %></span>
+      <span class="music-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+
+    <div class="music-panel" id="music-panel">
+      <div class="music-actions">
+        <button id="music-next" class="music-mini" type="button" title="下一首"><%- icon('next') %></button>
+      </div>
+      <small id="music-sub" class="music-hint"></small>
+    </div>
+
+    <audio id="music-audio" preload="none"></audio>
+  </div>
+<% } %>

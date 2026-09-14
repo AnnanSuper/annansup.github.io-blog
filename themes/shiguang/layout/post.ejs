@@ -1,0 +1,63 @@
+<article id="post" class="post-content<%- page.photos && page.photos.length ? ' has-photos' : '' %>">
+  <div class="post-body" id="post-body">
+    <%- page.content %>
+  </div>
+
+  <% if (page.photos && page.photos.length) { %>
+    <div class="post-photos">
+      <% page.photos.forEach(function (photo) { %>
+        <img src="<%- url_for(photo) %>" alt="<%= page.title %>" loading="lazy">
+      <% }); %>
+    </div>
+  <% } %>
+
+  <div class="post-tail">
+    <% if (page.categories && page.categories.length) { %>
+      <div class="post-tail-line">
+        <span class="post-tail-label"><%- icon('folder') %>分类</span>
+        <% page.categories.each(function (cat) { %>
+          <a class="post-tail-link" href="<%- url_for(cat.path) %>"><%= cat.name %></a>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+
+  <% if (theme.post.copyright) { %>
+    <div class="post-copyright">
+      <div class="post-copyright-title"><%- icon('copyright') %> 版权声明</div>
+      <p>本文由 <b><%= config.author %></b> 创作，采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener nofollow">署名-非商业性使用-相同方式共享 4.0</a> 协议进行许可。</p>
+      <p>转载请注明出处：<a href="<%- full_url_for(page.path) %>"><%- pretty_full_url(page.path) %></a></p>
+    </div>
+  <% } %>
+
+  <% if (page.prev || page.next) { %>
+    <nav class="post-nav">
+      <% if (page.prev) { %>
+        <a class="post-nav-item prev" href="<%- url_for(page.prev.path) %>">
+          <span class="post-nav-label"><%- icon('chevron-left') %> 上一篇</span>
+          <span class="post-nav-title"><%= page.prev.title %></span>
+        </a>
+      <% } else { %><div class="post-nav-item empty"></div><% } %>
+      <% if (page.next) { %>
+        <a class="post-nav-item next" href="<%- url_for(page.next.path) %>">
+          <span class="post-nav-label">下一篇 <%- icon('chevron-right') %></span>
+          <span class="post-nav-title"><%= page.next.title %></span>
+        </a>
+      <% } else { %><div class="post-nav-item empty"></div><% } %>
+    </nav>
+  <% } %>
+
+  <% if (theme.comments.enable) { %>
+    <div id="comments" class="comments-area">
+      <% if (theme.comments.type === 'giscus' && theme.comments.giscus.repo) { %>
+        <div id="giscus-container" data-repo="<%= theme.comments.giscus.repo %>" data-repo-id="<%= theme.comments.giscus.repo_id %>" data-category="<%= theme.comments.giscus.category %>" data-category-id="<%= theme.comments.giscus.category_id %>" data-mapping="<%= theme.comments.giscus.mapping %>"></div>
+      <% } else if (theme.comments.type === 'twikoo' && theme.comments.twikoo.env_id) { %>
+        <div id="twikoo-container" data-env-id="<%= theme.comments.twikoo.env_id %>"></div>
+      <% } else if (theme.comments.type === 'waline' && theme.comments.waline.server_url) { %>
+        <div id="waline-container" data-server-url="<%= theme.comments.waline.server_url %>"></div>
+      <% } else { %>
+        <div class="comments-tip">评论已开启，但还没填写配置，请到主题 <code>_config.yml</code> 的 <code>comments</code> 里填写。</div>
+      <% } %>
+    </div>
+  <% } %>
+</article>

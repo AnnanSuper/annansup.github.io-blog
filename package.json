@@ -1,0 +1,34 @@
+{
+  "name": "my-blog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "个人博客：写作 / 游戏 / 电影 / 动漫",
+  "scripts": {
+    "clean": "hexo clean",
+    "build": "hexo generate",
+    "server": "hexo server",
+    "dev": "hexo server --draft --open",
+    "deploy": "hexo deploy",
+    "new": "node tools/new-post.mjs",
+    "fetch": "node tools/fetch-all.mjs",
+    "fetch:steam": "node tools/fetch-steam.mjs",
+    "fetch:bangumi": "node tools/fetch-bangumi.mjs",
+    "fetch:douban": "node tools/fetch-douban.mjs"
+  },
+  "hexo": {
+    "version": "7.3.0"
+  },
+  "dependencies": {
+    "hexo": "^7.3.0",
+    "hexo-deployer-git": "^4.0.0",
+    "hexo-generator-archive": "^2.0.0",
+    "hexo-generator-category": "^2.0.0",
+    "hexo-generator-feed": "^3.0.0",
+    "hexo-generator-index": "^3.0.0",
+    "hexo-generator-tag": "^2.0.0",
+    "hexo-renderer-ejs": "^2.0.0",
+    "hexo-renderer-marked": "^7.0.0",
+    "hexo-server": "^3.0.0",
+    "undici": "^6.19.8"
+  }
+}

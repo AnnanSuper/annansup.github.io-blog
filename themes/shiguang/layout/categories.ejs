@@ -1,0 +1,35 @@
+<%
+  var categories = site.categories.sort('-length').toArray();
+%>
+<div class="taxonomy-page">
+  <div class="taxonomy-card">
+    <div class="taxonomy-head">
+      <span class="taxonomy-title"><%- icon('folder') %> 全部分类</span>
+      <span class="taxonomy-sub">共 <%= categories.length %> 个分类</span>
+    </div>
+    <div class="taxonomy-cloud">
+      <% categories.forEach(function (cat) { %>
+        <a class="taxonomy-tag" href="<%- url_for(cat.path) %>"><%= cat.name %><sup><%= cat.length %></sup></a>
+      <% }); %>
+    </div>
+  </div>
+
+  <div class="taxonomy-list">
+    <% categories.forEach(function (cat) { %>
+      <div class="taxonomy-card taxonomy-group">
+        <a class="taxonomy-group-title" href="<%- url_for(cat.path) %>">
+          <span class="taxonomy-group-name"><%- icon('folder') %><%= cat.name %></span>
+          <span class="taxonomy-group-count"><%= cat.length %> 篇 <%- icon('chevron-right') %></span>
+        </a>
+        <div class="taxonomy-posts">
+          <% cat.posts.sort('-date').limit(8).each(function (post) { %>
+            <a class="taxonomy-post" href="<%- url_for(post.path) %>">
+              <span class="taxonomy-post-title"><%= post.title %></span>
+              <time><%= date(post.date, 'YYYY-MM-DD') %></time>
+            </a>
+          <% }); %>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</div>

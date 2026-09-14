@@ -1,0 +1,11 @@
+node_modules/
+public/
+db.json
+.deploy_git/
+.env
+*.log
+.DS_Store
+Thumbs.db
+
+# Steam 库素材导出目录（原始文件很大，压缩后的封面已放进 source/img/covers/steam/）
+grid/

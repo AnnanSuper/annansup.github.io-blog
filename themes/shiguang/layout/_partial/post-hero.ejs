@@ -1,0 +1,19 @@
+<%
+  var cover = page.cover || theme.post.default_cover;
+  var words = word_count(page.content);
+  var minutes = Math.max(1, Math.round(words / 400));
+%>
+<div id="post-hero" class="post-hero<%- page.cover ? '' : ' no-cover' %>" style="--hero-cover:url('<%- url_for(cover) %>')">
+  <div class="post-hero-mask"></div>
+  <div class="post-hero-inner">
+    <h1 class="post-title"><%= page.title %></h1>
+    <div class="post-meta">
+      <span class="post-meta-item"><%- icon('calendar') %><%= date(page.date, 'YYYY-MM-DD') %></span>
+      <% if (page.categories && page.categories.length) { %>
+        <a class="post-meta-item" href="<%- url_for(page.categories.first().path) %>"><%- icon('folder') %><%= page.categories.first().name %></a>
+      <% } %>
+      <span class="post-meta-item"><%- icon('clock') %><%= minutes %> 分钟读完</span>
+      <span class="post-meta-item"><%- icon('pen') %><%= words %> 字</span>
+    </div>
+  </div>
+</div>

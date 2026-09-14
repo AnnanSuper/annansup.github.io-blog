@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="<%= config.language || 'zh-CN' %>" data-theme="light">
+<head>
+  <%- partial('_partial/head') %>
+</head>
+<body data-type="<%= is_post() ? 'post' : (is_home() ? 'home' : 'page') %>">
+  <div id="web-bg"></div>
+  <% if (theme.effects.enable && theme.effects.cursor_glow) { %><div id="cursor-glow" aria-hidden="true"></div><% } %>
+  <div id="card-blur" aria-hidden="true"></div>
+
+  <%- partial('_partial/nav') %>
+
+  <div id="pjax-container">
+  <header id="page-header"<%- (is_home() && theme.banner.enable) ? '' : ' class="not-top-img"' %>>
+    <% if (is_home() && theme.banner.enable) { %>
+      <%- partial('_partial/banner') %>
+    <% } %>
+    <% if (is_post()) { %>
+      <%- partial('_partial/post-hero') %>
+    <% } else if (is_page() && ['games', 'movies', 'anime'].indexOf(page.layout) === -1) { %>
+      <div id="page-site-info">
+        <h1 class="page-title"><%= page.title || config.title %></h1>
+        <% if (page.description || page.subtitle) { %><p class="page-subtitle"><%= page.subtitle || page.description %></p><% } %>
+      </div>
+    <% } else if (is_archive() || is_category() || is_tag()) { %>
+      <div id="page-site-info">
+        <h1 class="page-title">
+          <% if (is_category()) { %>分类：<%= page.category %><% } else if (is_tag()) { %>标签：<%= page.tag %><% } else { %>文章归档<% } %>
+        </h1>
+        <p class="page-subtitle"><%= page.total ? '共 ' + page.total + ' 篇' : '' %></p>
+      </div>
+    <% } %>
+  </header>
+
+  <main id="content-inner">
+    <div id="main">
+      <%- body %>
+    </div>
+    <aside id="sidebar">
+      <%- partial('_partial/sidebar') %>
+    </aside>
+  </main>
+
+  <%- partial('_partial/footer') %>
+  </div>
+  <%- partial('_partial/search') %>
+  <%- partial('_partial/mobile-menu') %>
+  <%- partial('_partial/scripts') %>
+</body>
+</html>

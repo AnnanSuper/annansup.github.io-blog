@@ -1,0 +1,67 @@
+<%
+  var data = (site.data && site.data.links) || { friends: [] };
+  var friends = data.friends || [];
+  var mine = Object.keys(theme.author_card.social || {}).map(function (key) {
+    var item = theme.author_card.social[key] || {};
+    return {
+      name: item.name || key,
+      url: item.link || '#',
+      icon: item.icon || key,
+      color: item.color || '#216e99',
+      desc: item.desc || ''
+    };
+  });
+%>
+
+<div class="links-section">
+  <div class="links-title"><span class="title-icon"><%- icon('link') %></span>我的主页</div>
+  <div class="my-links">
+    <% mine.forEach(function (item) { %>
+      <a class="my-link-card" href="<%- item.url %>" target="_blank" rel="noopener nofollow">
+        <span class="my-link-icon" style="--brand:<%= item.color %>"><%- icon(item.icon) %></span>
+        <span class="my-link-info">
+          <b><%= item.name %></b>
+          <small><%= item.desc %></small>
+        </span>
+        <span class="my-link-arrow"><%- icon('arrow-right') %></span>
+      </a>
+    <% }); %>
+  </div>
+</div>
+
+<div class="links-section">
+  <div class="links-title"><span class="title-icon"><%- icon('users') %></span>友情链接</div>
+  <% if (friends.length) { %>
+    <div class="friend-links">
+      <% friends.forEach(function (item) { %>
+        <a class="friend-card" href="<%- item.url %>" target="_blank" rel="noopener nofollow">
+          <img class="friend-avatar" src="<%- item.avatar || '/img/avatar.svg' %>" alt="<%= item.name %>" loading="lazy" referrerpolicy="no-referrer">
+          <span class="friend-info">
+            <b><%= item.name %></b>
+            <small><%= item.desc || '' %></small>
+          </span>
+        </a>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="collection-empty">
+      <p>还没有友链。</p>
+      <p class="collection-empty-tip">把朋友们填进 <code>source/_data/links.json</code> 的 <code>friends</code> 数组即可。</p>
+    </div>
+  <% } %>
+</div>
+
+<div class="links-section">
+  <div class="links-title"><span class="title-icon"><%- icon('mail') %></span>申请友链</div>
+  <div class="link-apply">
+    <p>欢迎交换友链，请先在贵站挂上我的链接，然后按下面格式留言或邮件告诉我：</p>
+    <pre class="link-apply-code">名称：<%= config.title %>
+地址：<%- config.url %>/
+头像：<%- config.url %>/img/avatar.svg
+简介：<%= config.description %></pre>
+    <button class="copy-btn" id="copy-friend-info" type="button" data-copy="名称：<%= config.title %>
+地址：<%- config.url %>/
+头像：<%- config.url %>/img/avatar.svg
+简介：<%= config.description %>"><%- icon('copy') %> 复制我的站点信息</button>
+  </div>
+</div>

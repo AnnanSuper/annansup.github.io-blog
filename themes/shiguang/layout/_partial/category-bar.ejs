@@ -1,0 +1,12 @@
+<%
+  var cats = site.categories.sort('-length').limit(12);
+%>
+<div id="category-bar">
+  <div class="category-inner">
+    <a class="category-item home<%- is_home() && !page.category ? ' active' : '' %>" href="<%- url_for('/') %>"><%- icon('home') %><span>首页</span></a>
+    <% cats.each(function (cat) { %>
+      <a class="category-item<%- (page.category && page.category === cat.name) ? ' active' : '' %>" href="<%- url_for(cat.path) %>"><%= cat.name %></a>
+    <% }); %>
+    <a class="category-item more" href="<%- url_for('/categories/') %>">更多 <%- icon('chevron-right') %></a>
+  </div>
+</div>

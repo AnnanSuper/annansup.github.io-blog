@@ -1,0 +1,48 @@
+<% if (is_post() && theme.post.toc && toc(page.content)) { %>
+  <div class="sidebar-card" id="toc-card">
+    <div class="sidebar-card-title"><span class="title-icon"><%- icon('list') %></span>目录</div>
+    <div class="toc-content"><%- toc(page.content, { list_number: false }) %></div>
+  </div>
+<% } %>
+
+<% if (theme.author_card.enable) { %>
+  <div class="sidebar-card author-card">
+    <div class="author-bg"></div>
+    <img class="author-avatar" src="<%- url_for(theme.author_card.avatar) %>" alt="<%= theme.author_card.name %>">
+    <div class="author-name"><%= theme.author_card.name %></div>
+    <div class="author-social">
+      <% Object.keys(theme.author_card.social || {}).forEach(function (key) { %>
+        <%
+          var item = theme.author_card.social[key];
+          var link = (item && item.link) ? item.link : item;
+          var iconName = (item && item.icon) ? item.icon : key;
+          var label = (item && item.name) ? item.name : key;
+        %>
+        <a href="<%- link %>" title="<%= label %>" target="_blank" rel="noopener nofollow"><%- icon(iconName) %></a>
+      <% }); %>
+    </div>
+  </div>
+<% } %>
+
+<% if (site.categories.length) { %>
+  <div class="sidebar-card">
+    <div class="sidebar-card-title"><span class="title-icon"><%- icon('folder') %></span>我的归档</div>
+    <div class="archive-list">
+      <% site.categories.sort('-length').each(function (cat) { %>
+        <a class="archive-item" href="<%- url_for(cat.path) %>"><%= cat.name %><span><%= cat.length %> 篇</span></a>
+      <% }); %>
+    </div>
+  </div>
+<% } %>
+
+<% if (theme.sidebar.stats) { %>
+  <div class="sidebar-card">
+    <div class="sidebar-card-title"><span class="title-icon"><%- icon('chart') %></span>小站统计</div>
+    <div class="stats-list">
+      <div class="stats-item"><span>文章总数</span><b><%= site.posts.length %></b></div>
+      <div class="stats-item"><span>建站天数</span><b><%= days_since(theme.sidebar.since) %> 天</b></div>
+      <div class="stats-item"><span>全站字数</span><b><%= total_words(site.posts) %></b></div>
+      <div class="stats-item"><span>归档分类</span><b><%= site.categories.length %></b></div>
+    </div>
+  </div>
+<% } %>

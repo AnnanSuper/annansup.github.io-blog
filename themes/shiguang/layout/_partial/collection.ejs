@@ -1,0 +1,120 @@
+<%
+  var key = page.data_key;
+  var data = (site.data && site.data[key]) || { items: [] };
+  var items = data.items || [];
+  var labels = page.labels || {};
+  var scored = items.filter(function (i) { return i.rating; });
+  var avg = scored.length ? (scored.reduce(function (s, i) { return s + Number(i.rating); }, 0) / scored.length) : 0;
+  // page.count_status 可以指定第三个统计要数哪个状态
+  var finished = page.count_status
+    ? items.filter(function (i) { return i.status === page.count_status; }).length
+    : items.filter(function (i) { return i.status && /完成|通关|看过|看完/.test(i.status); }).length;
+  var statuses = [];
+  items.forEach(function (i) { if (i.status && statuses.indexOf(i.status) === -1) statuses.push(i.status); });
+%>
+
+<div class="collection" style="--cover-aspect: <%= page.cover_aspect || 0.667 %>">
+  <div class="collection-head">
+    <div class="collection-stats">
+      <div class="collection-stat">
+        <b><%= items.length %></b>
+        <span><%= labels.total || '总计' %></span>
+      </div>
+      <div class="collection-stat">
+        <b><%= avg ? avg.toFixed(1) : '—' %></b>
+        <span><%= labels.avg || '平均分' %></span>
+      </div>
+      <div class="collection-stat">
+        <b><%= finished %></b>
+        <span><%= labels.finished || '已完成' %></span>
+      </div>
+    </div>
+    <div class="collection-tools">
+      <div class="collection-search">
+        <%- icon('search') %>
+        <input type="text" id="collection-search" placeholder="<%= labels.search || '搜索标题或标签' %>">
+      </div>
+      <select id="collection-sort" class="collection-sort">
+        <option value="default">默认排序</option>
+        <option value="rating">按评分</option>
+        <option value="date">按时间</option>
+        <option value="title">按标题</option>
+      </select>
+    </div>
+  </div>
+
+  <% if (statuses.length) { %>
+    <div class="collection-filters" id="collection-filters">
+      <button class="filter-btn active" data-filter="all" type="button">全部<sup><%= items.length %></sup></button>
+      <% statuses.forEach(function (status) { %>
+        <%
+          var count = items.filter(function (i) { return i.status === status; }).length;
+        %>
+        <button class="filter-btn" data-filter="<%= status %>" type="button"><%= status %><sup><%= count %></sup></button>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <% if (data.demo) { %>
+    <div class="demo-tip">
+      <span class="demo-tip-icon"><%- icon('fire') %></span>
+      现在展示的是<strong>示例数据</strong>：把账号填进根目录 <code>.env</code>（参考 <code>.env.example</code>）后执行
+      <code>npm run fetch</code>，这里就会换成你自己的真实收藏。
+    </div>
+  <% } %>
+
+  <% if (!items.length) { %>
+    <div class="collection-empty">
+      <p>这里还空着。</p>
+      <p class="collection-empty-tip">
+        先到根目录 <code>.env</code> 里填好账号（参考 <code>.env.example</code>），再执行 <code>npm run fetch</code>，
+        数据会自动写入 <code>source/_data/<%= key %>.json</code>。
+      </p>
+    </div>
+  <% } %>
+
+  <div class="collection-grid" id="collection-grid">
+    <% items.forEach(function (item, i) { %>
+      <article class="collection-card"
+        data-status="<%= item.status || '未分类' %>"
+        data-rating="<%= item.rating || 0 %>"
+        data-date="<%= item.date || '' %>"
+        data-title="<%= item.title %>"
+        data-tags="<%= (item.tags || []).join(',') %>">
+        <a class="collection-cover" href="<%- item.url || '#' %>"<%- item.url ? ' target="_blank" rel="noopener nofollow"' : '' %>>
+          <% if (item.cover) { %>
+            <span class="collection-cover-blur" style="background-image:url('<%= item.cover %>')"></span>
+          <% } %>
+          <span class="collection-cover-fallback" style="--seed:<%= (i * 7) % 12 %>"><%= item.title %></span>
+          <% if (item.cover) { %>
+            <img src="<%= item.cover %>" alt="<%= item.title %>" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">
+          <% } %>
+          <% if (item.status) { %><span class="collection-status"><%= item.status %></span><% } %>
+
+        </a>
+        <div class="collection-body">
+          <h3 class="collection-title">
+            <a href="<%- item.url || '#' %>"<%- item.url ? ' target="_blank" rel="noopener nofollow"' : '' %>><%= item.title %></a>
+          </h3>
+        </div>
+
+        <%
+          var comment = (item.comment || '').trim();
+          var sizeClass = comment.length > 140 ? ' xs' : (comment.length > 60 ? ' sm' : '');
+        %>
+        <div class="collection-popup">
+          <div class="popup-name"><%= item.title %></div>
+          <div class="popup-rule"></div>
+          <% if (comment) { %>
+            <p class="popup-comment<%= sizeClass %>"><%= comment %></p>
+          <% } %>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+
+  <div class="collection-footer-tip">
+    数据来源：<%= labels.source || '' %>
+    <% if (data.updated) { %>· 最后更新 <%= data.updated %><% } %>
+  </div>
+</div>

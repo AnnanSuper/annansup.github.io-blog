@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1b5374"/>
+      <stop offset="100%" stop-color="#7fb6cf"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#b)"/>
+  <circle cx="400" cy="240" r="96" fill="#ffffff" opacity="0.2"/>
+  <circle cx="400" cy="212" r="36" fill="#ffffff" opacity="0.9"/>
+  <path d="M400 258c44 0 76 27 84 66H316c8-39 40-66 84-66Z" fill="#ffffff" opacity="0.9"/>
+  <text x="150" y="430" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="42" font-weight="700" fill="#ffffff">关于</text>
+</svg>

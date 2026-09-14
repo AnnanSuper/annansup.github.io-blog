@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Hexo">
+  <rect width="120" height="120" rx="26" fill="#0e83cd"/>
+  <g fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 24 88 40v40L60 96 32 80V40z"/>
+    <path d="M46 46v28M74 46v28M46 60h28"/>
+  </g>
+</svg>

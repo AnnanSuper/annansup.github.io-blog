@@ -1,0 +1,59 @@
+<%
+  var entries = items || {};
+  var keys = Object.keys(entries);
+%>
+<% keys.forEach(function (key) { %>
+  <%
+    var value = entries[key];
+    var isGroup = value && typeof value === 'object' && !Array.isArray(value) && String(value.link || '').length === 0;
+  %>
+  <% if (isGroup) { %>
+    <div class="menus-item has-child">
+      <span class="menus-link"><%= key %><i class="menus-arrow"><%- icon('chevron-down') %></i></span>
+      <ul class="menus-child">
+        <%
+          // 文章菜单：全部文章 + 你在 source/_posts 里自建的分类
+          if (value._auto === 'categories') {
+        %>
+          <li>
+            <a class="menus-child-link" href="<%- url_for('/archives/') %>">
+              <span class="child-icon"><%- icon('archive') %></span><span>全部文章</span>
+            </a>
+          </li>
+          <% site.categories.sort('-length').each(function (cat) { %>
+            <li>
+              <a class="menus-child-link" href="<%- url_for(cat.path) %>">
+                <span class="child-icon"><%- icon('folder') %></span><span><%= cat.name %></span>
+                <span class="child-count"><%= cat.length %></span>
+              </a>
+            </li>
+          <% }); %>
+        <% } %>
+        <% Object.keys(value).forEach(function (childKey) { %>
+          <% if (childKey === '_auto') return; %>
+          <%
+            var child = value[childKey];
+            var childLink = (child && typeof child === 'object') ? child.link : child;
+            var childIcon = (child && typeof child === 'object') ? child.icon : null;
+          %>
+          <li>
+            <a class="menus-child-link" href="<%- url_for(childLink) %>">
+              <% if (childIcon) { %><span class="child-icon"><%- icon(childIcon) %></span><% } %>
+              <span><%= childKey %></span>
+            </a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  <% } else { %>
+    <%
+      var link = (value && typeof value === 'object') ? value.link : value;
+      var mainIcon = (value && typeof value === 'object') ? value.icon : null;
+    %>
+    <div class="menus-item">
+      <a class="menus-link" href="<%- url_for(link) %>">
+        <% if (mainIcon) { %><span class="child-icon"><%- icon(mainIcon) %></span><% } %><%= key %>
+      </a>
+    </div>
+  <% } %>
+<% }); %>

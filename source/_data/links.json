@@ -1,0 +1,16 @@
+{
+  "friends": [
+    {
+      "name": "Hexo",
+      "url": "https://hexo.io/zh-cn/",
+      "avatar": "/img/friends/hexo.svg",
+      "desc": "这个博客用的静态站点框架，快速、简洁"
+    },
+    {
+      "name": "Codex",
+      "url": "https://openai.com/codex/",
+      "avatar": "/img/friends/codex.svg",
+      "desc": "帮忙把这个博客从零搭起来的 AI 搭子"
+    }
+  ]
+}

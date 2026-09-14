@@ -1,0 +1,36 @@
+<%
+  var pageTitle = page.title ? (is_home() ? config.title : page.title + ' | ' + config.title) : config.title;
+  var desc = page.description || page.excerpt || config.description;
+  var keywords = page.tags ? page.tags.map(function(t){ return t.name; }).join(',') : (config.keywords || '');
+  var cover = page.cover ? full_url_for(page.cover) : (theme.banner.image ? full_url_for(theme.banner.image) : '');
+%>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="theme-color" content="#f7f9fe">
+<title><%= pageTitle %></title>
+<meta name="description" content="<%= strip_html(desc || '').substring(0, 120) %>">
+<meta name="keywords" content="<%= keywords %>">
+<meta name="author" content="<%= config.author %>">
+<meta name="generator" content="Hexo">
+<% if (page.photos && page.photos.length) { %><meta name="twitter:image" content="<%= full_url_for(page.photos[0]) %>"><% } %>
+<link rel="canonical" href="<%- full_url_for(page.path || '/') %>">
+<link rel="icon" type="image/png" href="<%- url_for('/img/favicon.png') %>">
+<link rel="apple-touch-icon" href="<%- url_for('/img/logo-180.png') %>">
+<link rel="alternate" href="<%- url_for('/atom.xml') %>" title="<%= config.title %>" type="application/atom+xml">
+<link rel="stylesheet" href="<%- url_for('/css/style.css') %>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('theme'); } catch (e) {}
+    var dark = t ? t === 'dark' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var root = document.documentElement;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    root.classList.toggle('dark', dark);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#18171d' : '#f7f9fe');
+  })();
+</script>

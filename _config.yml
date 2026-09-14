@@ -1,0 +1,112 @@
+# ============================================================
+#  Hexo 站点配置
+#  改这里就能改全站信息，改完执行：npm run server
+# ============================================================
+
+# ---------- 基础信息 ----------
+title: 梦鸼
+subtitle: 写作 · 游戏 · 电影 · 动漫
+description: 梦鸼的个人博客，写作、游戏、电影与动漫。
+keywords: 梦鸼, 写作, 随笔, 短篇小说, 游戏, 电影, 动漫, 博客
+author: 梦鸼
+language: zh-CN
+timezone: Asia/Shanghai
+
+# 上线后改成你自己的域名（会影响 RSS、站点地图里的链接）
+url: https://example.com
+root: /
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: false
+  trailing_html: false
+
+# ---------- 目录 ----------
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# ---------- 写作 ----------
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: true
+relative_link: false
+future: true
+
+# ---------- 代码高亮 ----------
+syntax_highlighter: highlight.js
+highlight:
+  line_number: true
+  auto_detect: false
+  tab_replace: '  '
+  wrap: true
+  hljs: false
+prismjs:
+  preprocess: false
+  line_number: true
+  tab_replace: ''
+
+# ---------- 首页与分页 ----------
+index_generator:
+  path: ''
+  per_page: 8
+  order_by: -date
+per_page: 10
+pagination_dir: page
+
+default_category: 随笔
+category_map:
+tag_map:
+
+date_format: YYYY-MM-DD
+time_format: HH:mm
+updated_option: mtime
+
+# ---------- 主题 ----------
+theme: shiguang
+
+# ---------- RSS ----------
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content: true
+
+# ---------- 部署（可选，先留空也不会影响本地预览） ----------
+deploy:
+  type: git
+  repo: ''
+  branch: main
+  message: 'Site updated: {{ now("YYYY-MM-DD HH:mm:ss") }}'
+
+# ============================================================
+#  收藏数据抓取配置（Steam / Bangumi / 豆瓣）
+#  密钥建议写在根目录 .env 里（见 .env.example），不要提交进 git
+# ============================================================
+fetch:
+  steam:
+    api_key: '' # 申请地址：https://steamcommunity.com/dev/apikey
+    steam_id: '' # 你的 64 位 SteamID
+    max: 300
+  bangumi:
+    user_id: '' # 例如 https://bgm.tv/user/yourname 里的 yourname
+    max: 300
+    import_comments: false # 是否把你在 Bangumi 写的短评一起抓过来（默认不抓）
+  douban:
+    user_id: '' # 例如 https://movie.douban.com/people/yourname/
+    cookie: '' # 豆瓣需要登录 Cookie 才能取到完整列表
+    max: 300
+    import_comments: false # 是否把你在豆瓣写的短评一起抓过来（默认不抓）

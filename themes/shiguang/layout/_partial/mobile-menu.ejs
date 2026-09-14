@@ -1,0 +1,13 @@
+<div id="mobile-menu" class="mobile-menu">
+  <div class="mobile-menu-mask" id="mobile-menu-mask"></div>
+  <div class="mobile-menu-panel">
+    <div class="mobile-site-data">
+      <a href="<%- url_for('/archives/') %>"><span>文章</span><b><%= site.posts.length %></b></a>
+      <a href="<%- url_for('/categories/') %>"><span>归档</span><b><%= site.categories.length %></b></a>
+      <a href="<%- url_for('/about/') %>"><span>关于</span><b><%- icon('link') %></b></a>
+    </div>
+    <div class="mobile-menus">
+      <%- partial('_partial/menu', { items: theme.menu }) %>
+    </div>
+  </div>
+</div>

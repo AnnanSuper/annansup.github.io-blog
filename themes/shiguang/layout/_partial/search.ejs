@@ -1,0 +1,15 @@
+<% if (theme.search.enable) { %>
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-header">
+        <span class="search-icon"><%- icon('search') %></span>
+        <input id="search-input" type="text" autocomplete="off" placeholder="<%= theme.search.placeholder %>">
+        <button id="search-close" type="button" class="search-close"><%- icon('close') %></button>
+      </div>
+      <div id="search-results" class="search-results">
+        <div class="search-tip">输入关键词开始搜索，支持标题、标签和正文</div>
+      </div>
+    </div>
+    <div class="search-mask" id="search-mask"></div>
+  </div>
+<% } %>

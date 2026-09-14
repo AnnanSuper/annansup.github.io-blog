@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="a" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4a6b33"/>
+      <stop offset="100%" stop-color="#a8c96a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#a)"/>
+  <circle cx="400" cy="230" r="110" fill="none" stroke="#ffffff" stroke-width="12" opacity="0.85"/>
+  <path d="M400 120v-44M290 230h-44M554 230h-44" stroke="#ffffff" stroke-width="12" stroke-linecap="round" opacity="0.85"/>
+  <path d="M370 210a14 14 0 0 1 28 0M432 210a14 14 0 0 1 28 0" stroke="#ffffff" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M362 282c22 20 54 20 76 0" stroke="#ffffff" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <text x="150" y="430" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="46" font-weight="700" fill="#ffffff">动漫</text>
+</svg>
