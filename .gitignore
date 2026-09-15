@@ -3,6 +3,10 @@ public/
 db.json
 .deploy_git/
 .env
+
+# 调试用的 GitHub API 响应导出（临时文件，不属于站点内容）
+out_repo.json
+runs.json
 *.log
 .DS_Store
 Thumbs.db
