@@ -14,7 +14,7 @@ timezone: Asia/Shanghai
 
 # 上线后改成你自己的域名（会影响 RSS、站点地图里的链接）
 url: https://annansup.com
-root: /
+root: /annansup.github.io-blog/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
