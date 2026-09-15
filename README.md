@@ -32,6 +32,8 @@ npm run server       # 启动本地预览
 | 命令 | 作用 |
 | --- | --- |
 | `npm run server` | 本地预览（推荐用这个验收） |
+| **`npm run deploy`** | **发布上线**（推送到 GitHub，自动触发部署） |
+| `npm run deploy -- "说明"` | 发布并附上提交说明 |
 | `npm run build` | 生成静态文件到 `public/` |
 | `npm run clean` | 清空缓存和 `public/` |
 | `npm run new -- "标题" "分类"` | 新建一篇文章 |
@@ -61,11 +63,12 @@ npm run server       # 启动本地预览
 ### 1. 全站信息：根目录 `_config.yml`
 
 ```yaml
-title: 拾光集              # 站点名
+title: 梦鸼                # 站点名
 subtitle: 写作 · 游戏 · 电影 · 动漫
 description: 一句话介绍
-author: 你的名字
-url: https://你的域名       # 上线后一定要改，会影响 RSS 和分享链接
+author: 梦鸼               # 你的名字
+url: https://annansup.com  # 自定义域名，会影响 RSS 和分享链接
+root: /                    # 用自定义域名时必须是 /
 ```
 
 ### 2. 主题样式与菜单：`themes/shiguang/_config.yml`
@@ -128,8 +131,8 @@ npm run server
 ## 三、写文章
 
 ```bash
-npm run new -- "今天想说的话" "随笔" "生活,随想"
-#             ↑标题            ↑分类   ↑标签（逗号分隔）
+npm run new -- "今天想说的话" "随笔"
+#             ↑标题            ↑分类
 ```
 
 会在 `source/_posts/随笔/日期-今天想说的话.md` 生成文件，并自动建好同名的配图文件夹（图片丢进去用 `![](图片名.png)` 引用）。
@@ -227,15 +230,23 @@ npm run fetch:douban
     {
       "name": "朋友的站名",
       "url": "https://example.com",
-      "avatar": "https://example.com/avatar.png",
+      "avatar": "/img/friends/朋友头像.png",
       "desc": "一句话介绍"
     }
   ]
 }
 ```
 
-友链页里「我的主页」那四张卡片读取的是主题配置里的社交链接（`themes/shiguang/_config.yml` →
+**头像建议下载到本地**，放进 `source/img/friends/`，然后 `avatar` 写 `/img/friends/文件名`。
+直接填别人网站的图片地址通常会被防盗链拦掉，显示成破图。不填 `avatar` 则使用默认头像 `/img/avatar.svg`。
+
+JSON 格式很严格：引号必须是英文 `"`，条目之间要有逗号、最后一条后面不要有逗号。
+写错了友链会整块消失，可以用 <https://jsonlint.com> 校验。
+
+友链页里「我的主页」那几张卡片读取的是主题配置里的社交链接（`themes/shiguang/_config.yml` →
 `author_card.social`），改一处就够了。
+
+> 面向小白的逐步操作见 [`使用说明.md`](使用说明.md) 第 2 节。
 
 ---
 
@@ -258,12 +269,47 @@ D:\网站
 │   ├── layout/              # EJS 模板
 │   └── source/              # css / js / img
 ├── scripts/                 # Hexo 插件（图标、字数统计、搜索索引）
-└── tools/                   # 抓取脚本（Steam / Bangumi / 豆瓣）与新建文章脚本
+└── tools/                   # publish.mjs（一键发布）+ 抓取脚本 + 新建文章脚本
 ```
 
 ---
 
 ## 七、部署上线
+
+**当前站点已经上线：<https://annansup.com>**
+
+架构：`npm run deploy` → 推送到 GitHub → GitHub Actions 自动构建 → GitHub Pages 发布。
+
+```
+本地改动  →  npm run deploy  →  GitHub Actions  →  https://annansup.com
+                             （约 1 分钟）
+```
+
+### 关键配置（一般不需要动）
+
+| 位置 | 值 | 说明 |
+| --- | --- | --- |
+| `_config.yml` → `url` | `https://annansup.com` | 影响 RSS、canonical、分享链接 |
+| `_config.yml` → `root` | `/` | **用自定义域名时必须是 `/`**，否则全站链接会带错前缀导致 404 |
+| `source/CNAME` | `annansup.com` | 告诉 GitHub Pages 用哪个域名 |
+| `.github/workflows/deploy.yml` | — | push 到 `main` 自动部署 |
+| `_config.yml` → `deploy.repo` | 空 | 走 Actions，不用 `hexo deploy` |
+
+DNS（在腾讯云 DNSPod 配置）：`@` 指向 `185.199.108.153` 和 `185.199.109.153`，
+`www` CNAME 指向 `annansuper.github.io`。HTTPS 证书由 GitHub 自动申请和续期。
+
+> **`npm run deploy` 做的是 `tools/publish.mjs`**，它处理了三件容易踩坑的事：
+> 中文提交信息乱码、自动探测本机 Clash 代理、找不到 `git` 时回退到便携版路径。
+> 没有它的话，在 PowerShell 里直接 `git commit -m "中文"` 提交信息会变成乱码。
+
+### 部署失败怎么查
+
+打开 <https://github.com/AnnanSuper/annansup.github.io-blog/actions> 看运行记录，
+红色 ✗ 就是失败。特别注意：**`GITHUB_TOKEN` 无法创建 Pages 站点**（`configure-pages` 的
+`enablement: true` 会报 `Resource not accessible by integration`），
+所以 Pages 必须先在仓库 Settings → Pages → Source 选 `GitHub Actions` 手工开启一次，之后才永久可用。
+
+### 想换到别的托管
 
 生成的是纯静态文件，扔到任何静态托管都能跑：
 
@@ -272,10 +318,7 @@ npm run clean && npm run build     # 产物在 public/
 ```
 
 - **Vercel / Netlify**：连接仓库，构建命令 `npm run build`，输出目录 `public`
-- **GitHub Pages**：在 `_config.yml` 里填好 `url`，把 `deploy` 改成你的仓库后执行 `npm run deploy`
 - **自己的服务器**：把 `public/` 里的文件传到网站根目录（宝塔、Nginx 均可）
-
-上线前记得改 `_config.yml` 里的 `url`，并在主题配置里填 `footer.icp` 备案号（如果需要）。
 
 ---
 
@@ -283,6 +326,18 @@ npm run clean && npm run build     # 产物在 public/
 
 **Q：`npm run server` 提示端口被占用？**
 换个端口：`npx hexo server -p 4001`。
+
+**Q：执行了 `npm run deploy`，但 https://annansup.com 上还是旧的？**
+部署需要时间，先等 1～2 分钟，然后 `Ctrl + F5` 强制刷新（普通刷新可能读到缓存）。
+仍然没变就去 [Actions 页面](https://github.com/AnnanSuper/annansup.github.io-blog/actions) 看运行记录，
+红色 ✗ 表示构建失败。
+
+**Q：`npm run deploy` 报找不到 `git` 命令？**
+关掉 PowerShell 重开一个（PATH 需要新窗口才生效）。发布脚本本身在找不到 `git` 时会回退到
+`%LOCALAPPDATA%\PortableTools\MinGit\cmd\git.exe`。
+
+**Q：`npm run deploy` 推送超时？**
+先确认 Clash 代理开着，脚本会自动探测 `127.0.0.1:7890`。
 
 **Q：抓取的命令报 `fetch failed`？**
 通常是网络问题：Steam / Bangumi 的接口在国内有时连不上，在 `.env` 里配置 `HTTPS_PROXY` 后重试。
