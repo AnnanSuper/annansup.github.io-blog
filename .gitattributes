@@ -1,0 +1,9 @@
+# Windows 批处理文件必须是 CRLF 行尾，否则 cmd 会解析错乱
+# （曾出现过：LF 行尾 + 中文 → "is not recognized as an internal or external command"）
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 其余文本文件统一用 LF
+*.md text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
