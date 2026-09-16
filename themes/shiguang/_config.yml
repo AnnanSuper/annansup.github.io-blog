@@ -147,11 +147,12 @@ search:
 # ---------- 左下角音乐播放器 ----------
 music:
   enable: true
-  # 把 mp3 放进 source/music/ 目录即可，页面会自动扫描并随机播放
+  # 把 mp3 / m4a / ogg / wav / flac 放进 source/music/ 目录即可，页面会自动扫描
   folder: /music/
   title: 我的收藏
-  volume: 0.35
-  loop: true # 一首放完自动接着播放下一首（循环播放）
+  volume: 0.7 # 播放音量，0 ~ 1。觉得声音小就调大（原来 0.35 在笔记本上偏小）
+  loop: true # 一首放完自动接着播放下一首
+  shuffle: false # false = 按歌单顺序循环播放（默认）；true = 随机播放
   # 如果你想把音乐放在别处（比如 CDN），可以直接在这里写歌单：
   # playlist:
   #   - name: 歌曲名

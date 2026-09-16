@@ -6,6 +6,7 @@
     commentType: '<%= theme.comments.type %>',
     musicVolume: <%= typeof theme.music.volume === 'number' ? theme.music.volume : 0.7 %>,
     musicLoop: <%= theme.music.loop === false ? 'false' : 'true' %>,
+    musicShuffle: <%= theme.music.shuffle === true ? 'true' : 'false' %>,
     pjaxEnable: <%= (theme.pjax && theme.pjax.enable) ? 'true' : 'false' %>,
     effects: {
       cursorGlow: <%= (theme.effects.enable && theme.effects.cursor_glow) ? 'true' : 'false' %>,

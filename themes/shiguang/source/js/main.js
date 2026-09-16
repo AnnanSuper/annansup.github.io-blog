@@ -520,8 +520,17 @@
     var tracks = [];
     var current = -1;
     var currentName = '';
+    var ready = false;      // 歌单是否已加载完成
+    var wantPlay = false;   // 歌单还没好时用户就点了播放，加载完自动接上
+    var skipCount = 0;      // 连续跳过坏文件的次数，防止死循环
 
     audio.volume = typeof CONFIG.musicVolume === 'number' ? CONFIG.musicVolume : 0.7;
+
+    function hint(text) {
+      if (!subEl) return;
+      subEl.textContent = text || '';
+      subEl.style.display = text ? '' : 'none';
+    }
 
     function setPlayingUI(playing) {
       player.classList.toggle('playing', playing);
@@ -532,47 +541,71 @@
       }
     }
 
-    function pickIndex() {
-      if (tracks.length < 2) return 0;
-      var index;
-      do {
-        index = Math.floor(Math.random() * tracks.length);
-      } while (index === current);
-      return index;
+    // 下一首：默认按歌单顺序往下走，到底了回到第一首（循环）
+    // 想改回随机播放，把主题配置里的 music.shuffle 设成 true
+    function nextIndex() {
+      if (!tracks.length) return -1;
+      if (CONFIG.musicShuffle === true && tracks.length > 1) {
+        var i;
+        do {
+          i = Math.floor(Math.random() * tracks.length);
+        } while (i === current);
+        return i;
+      }
+      return (current + 1) % tracks.length;
     }
 
-    function playRandom() {
-      if (!tracks.length) return;
-      current = pickIndex();
+    function playAt(index) {
+      if (!tracks.length || index < 0) return;
+      current = index;
       var track = tracks[current];
       currentName = track.name;
       player.classList.add('has-track');
       audio.src = track.url;
       setMarqueeText(titleEl, track.name);
-      audio.play().catch(function () {
-        if (subEl) subEl.textContent = '浏览器拦住了播放，再点一次试试';
+      audio.play().then(function () {
+        skipCount = 0;
+        hint('');
+      }).catch(function () {
+        hint('浏览器拦住了播放，再点一次按钮试试');
       });
+    }
+
+    function playNext() {
+      playAt(nextIndex());
     }
 
     fetch(CONFIG.root + 'music/playlist.json')
       .then(function (response) { return response.json(); })
       .then(function (data) {
         tracks = data.tracks || [];
-        if (subEl) {
-          // 有歌的时候不显示多余文字，只在没歌时给个提示
-          subEl.textContent = tracks.length ? '' : '把 mp3 放进 source/music/ 就能播放';
-          subEl.style.display = tracks.length ? 'none' : '';
+        ready = true;
+        if (!tracks.length) {
+          hint('没找到歌曲，把 mp3 放进 source/music/ 再发布一次');
+          return;
+        }
+        hint('');
+        // 用户在歌单加载完之前就点过播放，现在补上
+        if (wantPlay) {
+          wantPlay = false;
+          playNext();
         }
       })
       .catch(function () {
-        if (subEl) subEl.textContent = '歌单加载失败';
+        hint('歌单加载失败，刷新页面试试');
       });
 
     if (toggleBtn) {
       toggleBtn.addEventListener('click', function () {
         if (audio.paused) {
+          if (!ready) {
+            // 歌单还没加载完：记下意图，加载完自动播放，并给出提示
+            wantPlay = true;
+            hint('歌单加载中…');
+            return;
+          }
           if (!audio.src || audio.ended) {
-            playRandom();
+            playNext();
           } else {
             if (currentName) setMarqueeText(titleEl, currentName);
             audio.play().catch(function () {});
@@ -586,22 +619,37 @@
     if (nextBtn) {
       nextBtn.addEventListener('click', function (e) {
         e.stopPropagation();
-        playRandom();
+        if (!ready) {
+          wantPlay = true;
+          hint('歌单加载中…');
+          return;
+        }
+        playNext();
       });
     }
 
     audio.addEventListener('play', function () { setPlayingUI(true); });
     audio.addEventListener('pause', function () { setPlayingUI(false); });
-    // 循环播放：一首放完自动接着播下一首（想关掉就把主题配置里的 music.loop 设成 false）
+    // 顺序循环：一首放完自动接着播下一首，最后一首放完回到第一首
+    // （想关掉就把主题配置里的 music.loop 设成 false）
     audio.addEventListener('ended', function () {
       if (CONFIG.musicLoop === false) {
         setPlayingUI(false);
         return;
       }
-      playRandom();
+      playNext();
     });
     audio.addEventListener('error', function () {
-      if (subEl && audio.src) subEl.textContent = '这首放不出来，换一首试试';
+      if (!audio.src) return;
+      // 某个文件放不出来时自动跳到下一首，最多跳完整个歌单就停下
+      if (skipCount < tracks.length) {
+        skipCount++;
+        hint('这首放不出来，已跳到下一首');
+        playNext();
+      } else {
+        hint('好几首都放不出来，检查一下 source/music/ 里的文件');
+        setPlayingUI(false);
+      }
     });
 
   })();
