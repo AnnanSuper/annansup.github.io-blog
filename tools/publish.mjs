@@ -21,6 +21,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REPO = 'AnnanSuper/annansup.github.io-blog';
 const BRANCH = 'main';
 
+// 网络操作最多等 2 分钟。git 默认的 TCP 连接超时是 5 分钟，
+// 断网时会让人干等很久才看到报错。
+const NET_TIMEOUT = 120000;
+
 function log(msg) {
   console.log(msg);
 }
@@ -53,9 +57,11 @@ function resolveGit() {
   return null;
 }
 
-function runGit(git, args, env) {
-  const r = spawnSync(git, args, { cwd: root, stdio: 'inherit', env, shell: false });
-  if (r.error) throw r.error;
+function runGit(git, args, env, timeout) {
+  const opts = { cwd: root, stdio: 'inherit', env, shell: false };
+  if (timeout) opts.timeout = timeout;
+  const r = spawnSync(git, args, opts);
+  if (r.error) return 1; // 超时被杀或启动失败，交给调用方报错
   return r.status ?? 1;
 }
 
@@ -93,42 +99,44 @@ const staged = spawnSync(git, ['-c', 'core.quotePath=false', 'diff', '--cached',
 const changed = (staged.stdout || '').trim().split('\n').filter(Boolean);
 
 if (changed.length === 0) {
-  log('· 没有任何改动，无需发布。');
-  log('   （如果你刚改完文件，请确认保存了）');
-  process.exit(0);
+  log('· 没有新的改动需要提交（刚改完文件的话，请确认已保存）');
+} else {
+  log(`· 共 ${changed.length} 个文件有改动：`);
+  changed.slice(0, 20).forEach((f) => log(`    ${f}`));
+  if (changed.length > 20) log(`    … 还有 ${changed.length - 20} 个`);
 }
-
-log(`· 共 ${changed.length} 个文件有改动：`);
-changed.slice(0, 20).forEach((f) => log(`    ${f}`));
-if (changed.length > 20) log(`    … 还有 ${changed.length - 20} 个`);
 
 // ---------- 2. 提交 ----------
-log('\n[2/4] 提交…');
-const message =
-  process.argv.slice(2).join(' ').trim() ||
-  `更新站点内容 ${new Date().toLocaleString('zh-CN', { hour12: false })}`;
+if (changed.length > 0) {
+  log('\n[2/4] 提交…');
+  const message =
+    process.argv.slice(2).join(' ').trim() ||
+    `更新站点内容 ${new Date().toLocaleString('zh-CN', { hour12: false })}`;
 
-// 用 UTF-8 临时文件传提交信息，避免中文乱码
-const msgFile = path.join(os.tmpdir(), `hexo-publish-${Date.now()}.txt`);
-writeFileSync(msgFile, `${message}\n`, 'utf8');
-try {
-  if (runGit(git, ['commit', '-F', msgFile], env) !== 0) {
-    console.error('❌ 提交失败');
-    process.exit(1);
-  }
-} finally {
+  // 用 UTF-8 临时文件传提交信息，避免中文乱码
+  const msgFile = path.join(os.tmpdir(), `hexo-publish-${Date.now()}.txt`);
+  writeFileSync(msgFile, `${message}\n`, 'utf8');
   try {
-    unlinkSync(msgFile);
-  } catch {
-    /* 清理失败不影响结果 */
+    if (runGit(git, ['commit', '-F', msgFile], env) !== 0) {
+      console.error('❌ 提交失败');
+      process.exit(1);
+    }
+  } finally {
+    try {
+      unlinkSync(msgFile);
+    } catch {
+      /* 清理失败不影响结果 */
+    }
   }
+  log(`· 提交信息：${message}`);
 }
-log(`· 提交信息：${message}`);
 
 // ---------- 3. 同步远端 ----------
 log('\n[3/4] 同步远端…');
-if (runGit(git, ['fetch', 'origin', BRANCH], env) !== 0) {
-  console.error('❌ 拉取远端失败，请检查网络或代理');
+if (runGit(git, ['fetch', 'origin', BRANCH], env, NET_TIMEOUT) !== 0) {
+  console.error('❌ 连不上 GitHub。');
+  console.error('   请先打开桌面上的「Clash for Windows」，等它连上后再重新执行一次。');
+  console.error('   （改动已经提交到本地了，不会丢，补推即可）');
   process.exit(1);
 }
 const behind = spawnSync(git, ['rev-list', '--count', `HEAD..origin/${BRANCH}`], {
@@ -145,9 +153,22 @@ if (Number((behind.stdout || '0').trim()) > 0) {
 }
 
 // ---------- 4. 推送 ----------
-log('\n[4/4] 推送到 GitHub…');
-if (runGit(git, ['push', 'origin', BRANCH], env) !== 0) {
-  console.error('❌ 推送失败');
+// 即使这次没有新改动，也要检查有没有上次没推成功的本地提交
+const ahead = spawnSync(git, ['rev-list', '--count', `origin/${BRANCH}..HEAD`], {
+  cwd: root,
+  encoding: 'utf8',
+  env,
+});
+if (Number((ahead.stdout || '0').trim()) === 0) {
+  log('\n✅ 本地和 GitHub 已经完全一致，没有需要发布的内容。');
+  log('   网站地址：    https://annansup.com');
+  process.exit(0);
+}
+
+log(`\n[4/4] 推送到 GitHub（${(ahead.stdout || '').trim()} 个提交）…`);
+if (runGit(git, ['push', 'origin', BRANCH], env, NET_TIMEOUT) !== 0) {
+  console.error('❌ 推送失败。');
+  console.error('   常见原因：Clash 没开、或者网络不通。打开 Clash 后重新执行本命令即可补推。');
   process.exit(1);
 }
 
