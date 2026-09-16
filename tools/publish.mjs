@@ -85,7 +85,11 @@ if (runGit(git, ['add', '-A'], env) !== 0) {
   process.exit(1);
 }
 
-const staged = spawnSync(git, ['diff', '--cached', '--name-only'], { cwd: root, encoding: 'utf8', env });
+const staged = spawnSync(git, ['-c', 'core.quotePath=false', 'diff', '--cached', '--name-only'], {
+  cwd: root,
+  encoding: 'utf8',
+  env,
+});
 const changed = (staged.stdout || '').trim().split('\n').filter(Boolean);
 
 if (changed.length === 0) {
