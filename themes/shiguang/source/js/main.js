@@ -555,6 +555,27 @@
       return (current + 1) % tracks.length;
     }
 
+    // 把播放失败的真实原因翻译成人话。
+    // 注意：不能一律说成「浏览器拦截了自动播放」——
+    // 实测「代理没开、mp3 拉不下来」时 play() 也会 reject，
+    // 但错误是 NotSupportedError + audio.error.code 4，属于网络/加载失败。
+    function playFailHint(err) {
+      var code = audio.error ? audio.error.code : 0;
+      if (err && err.name === 'NotAllowedError') {
+        return '浏览器拦住了自动播放，再点一次按钮试试';
+      }
+      if (code === 2) {
+        return '这首歌下载失败（网络中断）——检查网络或打开代理后重试';
+      }
+      if (code === 4 || (err && err.name === 'NotSupportedError')) {
+        return '这首歌加载不出来——多半是网络不通，打开代理或换个网络再试';
+      }
+      if (code === 3) {
+        return '这首歌解码失败，文件可能损坏';
+      }
+      return '这首歌没能播放，检查网络或文件';
+    }
+
     function playAt(index) {
       if (!tracks.length || index < 0) return;
       current = index;
@@ -566,8 +587,10 @@
       audio.play().then(function () {
         skipCount = 0;
         hint('');
-      }).catch(function () {
-        hint('浏览器拦住了播放，再点一次按钮试试');
+      }).catch(function (err) {
+        // 切换歌曲时上一次播放会被中断，这是正常的，不用提示
+        if (err && err.name === 'AbortError') return;
+        hint(playFailHint(err));
       });
     }
 
@@ -592,7 +615,7 @@
         }
       })
       .catch(function () {
-        hint('歌单加载失败，刷新页面试试');
+        hint('歌单加载失败：网络可能不通，检查网络或代理后刷新页面');
       });
 
     if (toggleBtn) {
@@ -641,13 +664,21 @@
     });
     audio.addEventListener('error', function () {
       if (!audio.src) return;
-      // 某个文件放不出来时自动跳到下一首，最多跳完整个歌单就停下
+      var code = audio.error ? audio.error.code : 0;
+
+      // code 4 = 音源加载失败。整站网络不通时，七首歌全试一遍没有意义
+      // （实测网络断掉时会瞬间连发 7 个失败请求），所以试过一次就停下。
+      if (code === 4 && skipCount >= 1) {
+        hint('歌曲加载不出来——多半是网络不通，打开代理或换个网络再试');
+        setPlayingUI(false);
+        return;
+      }
       if (skipCount < tracks.length) {
         skipCount++;
         hint('这首放不出来，已跳到下一首');
         playNext();
       } else {
-        hint('好几首都放不出来，检查一下 source/music/ 里的文件');
+        hint('歌曲都加载不出来，检查网络或代理（文件本身应该没问题）');
         setPlayingUI(false);
       }
     });
