@@ -92,16 +92,19 @@
           <% if (item.status) { %><span class="collection-status"><%= item.status %></span><% } %>
 
         </a>
-        <div class="collection-body">
-          <h3 class="collection-title">
-            <a href="<%- item.url || '#' %>"<%- item.url ? ' target="_blank" rel="noopener nofollow"' : '' %>><%= item.title %></a>
-          </h3>
-        </div>
-
         <%
           var comment = (item.comment || '').trim();
           var sizeClass = comment.length > 140 ? ' xs' : (comment.length > 60 ? ' sm' : '');
         %>
+        <div class="collection-body">
+          <h3 class="collection-title">
+            <a href="<%- item.url || '#' %>"<%- item.url ? ' target="_blank" rel="noopener nofollow"' : '' %>><%= item.title %></a>
+          </h3>
+          <% if (comment) { %>
+            <p class="collection-comment<%= sizeClass %>"><%= comment %></p>
+          <% } %>
+        </div>
+
         <div class="collection-popup">
           <div class="popup-name"><%= item.title %></div>
           <div class="popup-rule"></div>

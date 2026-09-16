@@ -1763,24 +1763,33 @@ html[data-theme='dark'] .collection-card:hover {
   border-radius: 16px;
   background: var(--card-bg);
   box-shadow: 0 18px 50px rgba(45, 42, 38, 0.2);
-  opacity: 0;
-  visibility: hidden;
   pointer-events: none;
-  transform: translateX(-16px) scale(0.94);
   transform-origin: left center;
-  transition: opacity 0.4s ease, transform 0.62s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0.4s;
+  /* 关键：这里必须用 display:none，不能用 visibility:hidden。
+     visibility:hidden 的元素仍然参与布局，弹窗向左/右多伸出 260px，
+     会把整个文档撑宽（手机上实测多出 230px 的横向滚动）。 */
+  display: none;
 }
 
 html[data-theme='dark'] .collection-popup {
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
 }
 
+/* 悬停时才真正渲染出来，用动画代替原来的 transition（display 无法过渡） */
 .collection-card:hover .collection-popup {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition-delay: 0.28s;
+  display: block;
+  animation: popup-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+}
+
+@keyframes popup-in {
+  from {
+    opacity: 0;
+    transform: translateX(-16px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* 靠右的卡片，信息卡翻到左边，避免超出屏幕 */
@@ -1788,11 +1797,21 @@ html[data-theme='dark'] .collection-popup {
   left: auto;
   right: calc(100% + 16px);
   transform-origin: right center;
-  transform: translateX(16px) scale(0.94);
 }
 
 .collection-card.popup-left:hover .collection-popup {
-  transform: none;
+  animation-name: popup-in-left;
+}
+
+@keyframes popup-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(16px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .popup-name {
@@ -1922,6 +1941,17 @@ body.card-focus #card-blur {
 
 .collection-title a:hover {
   color: var(--main);
+}
+
+/* 卡片内联短评：桌面端隐藏（短评走悬停弹窗），手机上才显示。
+   手机没有悬停，弹窗式的展开体验很怪，所以直接平铺在卡片里。 */
+.collection-comment {
+  display: none;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--font-muted);
+  word-break: break-word;
 }
 
 .collection-original {
@@ -3068,6 +3098,39 @@ html[data-theme='dark'] .music-panel {
   .music-now {
     max-width: 90px;
   }
+
+  /* ---- 手机/触屏没有悬停，短评改为直接平铺在卡片里 ---- */
+  .collection-popup {
+    display: none !important;
+  }
+
+  .collection-comment {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 13px;
+  }
+
+  .collection-comment.sm,
+  .collection-comment.xs {
+    font-size: 12.5px;
+    line-height: 1.65;
+  }
+
+  /* ---- 公告在手机上允许换行，不再截断成一串省略号 ---- */
+  .notice-text {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.55;
+  }
+
+  /* ---- 收藏卡片标题略微放大，长标题更好读 ---- */
+  .collection-title {
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
 }
 
 @media (max-width: 520px) {
@@ -3101,5 +3164,29 @@ html[data-theme='dark'] .music-panel {
 
   .site-name-text {
     font-size: 15px;
+  }
+
+  /* ---- 主页横幅上那四个按钮：手机上缩小图标和内边距，保证「写作/游戏/电影/动漫」完整显示 ----
+     原来每个按钮约 75px，而要塞下「图标24 + 间距 + 两字文字 + 内边距24」约需 90px，
+     文字被 overflow:hidden 裁掉了。 */
+  .banner-tabs {
+    height: 50px;
+    gap: 7px;
+  }
+
+  .banner-tab {
+    padding: 0 5px;
+    border-radius: 10px;
+  }
+
+  .banner-tab .tab-icon .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .banner-tab .tab-text {
+    max-width: none;
+    margin-left: 4px;
+    font-size: 12.5px;
   }
 }
