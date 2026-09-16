@@ -11,6 +11,12 @@
       "url": "https://openai.com/codex/",
       "avatar": "/img/friends/codex.svg",
       "desc": "帮忙把这个博客从零搭起来的 AI 搭子"
+    },
+    {
+      "name": "unmyic",
+      "url": "https://blog.unmyic.com/",
+      "avatar": "/img/friends/unmyic.png",
+      "desc": "Web 开发与工程学习笔记"
     }
   ]
 }
